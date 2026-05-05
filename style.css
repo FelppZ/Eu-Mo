@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header e Relógios */
+header {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.clocks {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.clock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.clock-item small {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.divider {
+    width: 1px;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Card Principal Centralizado */
+.container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* Slideshow */
+.slideshow {
+    width: 100%;
+    height: 300px;
+    background: #eee;
+}
+
+#slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* Texto e Contador */
+.content {
+    padding: 25px;
+    color: white;
+}
+
+h1 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+#timer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.t-unit {
+    display: flex;
+    flex-direction: column;
+}
+
+.t-unit span {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.t-unit label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+/* Botão */
+.btn-config {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid white;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-config:hover { background: rgba(255, 255, 255, 0.5); }
+
+/* Corações */
+.heart {
+    position: absolute;
+    color: white;
+    pointer-events: none;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
