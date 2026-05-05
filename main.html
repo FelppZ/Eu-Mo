@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa Contagem Regressiva</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="heart-container"></div>
+
+    <header>
+        <div class="clocks">
+            <div class="clock-item">
+                <small>🇧🇷BRASIL</small>
+                <span id="time-br">00:00</span>
+            </div>
+            <div class="divider"></div>
+            <div class="clock-item">
+                <small>	🇲🇾MALÁSIA</small>
+                <span id="time-my">00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="glass-card">
+            <!-- Slideshow -->
+            <div class="slideshow">
+                <img id="slide-img" src="" alt="Nossa Foto">
+            </div>
+
+            <!-- Contador -->
+            <div class="content">
+                <h1>❤️Tempo para ver Mo</h1>
+                <div id="timer">
+                    <div class="t-unit"><span id="days">00</span><label>Dias</label></div>
+                    <div class="t-unit"><span id="hours">00</span><label>Horas</label></div>
+                    <div class="t-unit"><span id="minutes">00</span><label>Min</label></div>
+                    <div class="t-unit"><span id="seconds">00</span><label>Seg</label></div>
+                </div>
+                
+                <button onclick="checkAdmin()" class="btn-config">⚙️ Ajustar Data</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
