@@ -1,50 +1,355 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossa Contagem Regressiva</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raquel ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #ff4f87;
+  --primary-light: #ff8fb1;
+  --bg-gradient: linear-gradient(135deg, #fff0f6 0%, #ffe3ee 50%, #ffd6e7 100%);
+  --text-dark: #4a152d;
+  --card-shadow: 0 20px 40px rgba(255, 79, 135, 0.12);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 30px;
+}
+
+.heart-pulse {
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow: var(--card-shadow);
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+/* Área de Contagem */
+.counter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  justify-content: center;
+}
+
+.box {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 79, 135, 0.1);
+  padding: 20px 15px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.big {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8a576f;
+}
+
+.progress-container {
+  margin-top: 30px;
+}
+
+.progress {
+  height: 14px;
+  background: #fcdce7;
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 99px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pct-text {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 12px;
+  color: #6e2d4d;
+}
+
+/* Slideshow de Fotos */
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 350px;
+  margin: 0 auto 25px auto;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  background: #f5f5f5;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Área de Texto */
+.message-area {
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.message-area p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-style: italic;
+  color: #6e2d4d;
+  margin: 0;
+}
+
+/* Mapa e Rota */
+.map-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+#mapWrap {
+  position: relative;
+  background: #000;
+}
+
+#mapImage {
+  width: 100%;
+  display: block;
+  opacity: 0.85;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.center { text-align: center; }
+
+@keyframes float {
+  0% { transform: translate(-16px, 12px); }
+  50% { transform: translate(-16px, 6px); }
+  100% { transform: translate(-16px, 12px); }
+}
+.floating-plane {
+  animation: float 2s ease-in-out infinite;
+}
+
+@media (max-width: 600px) {
+  .counter { grid-template-columns: repeat(2, 1fr); }
+  h1 { font-size: 1.8rem; }
+  .slideshow-container { height: 280px; }
+}
+</style>
 </head>
 <body>
-    <div id="heart-container"></div>
+<div class="container">
+  <h1 class="center"><span class="heart-pulse">❤️</span> Contagem regressiva <span class="heart-pulse">❤️</span></h1>
 
-    <header>
-        <div class="clocks">
-            <div class="clock-item">
-                <small>🇧🇷BRASIL</small>
-                <span id="time-br">00:00</span>
-            </div>
-            <div class="divider"></div>
-            <div class="clock-item">
-                <small>	🇲🇾MALÁSIA</small>
-                <span id="time-my">00:00</span>
-            </div>
-        </div>
-    </header>
+  <div class="card">
+    <div class="counter">
+      <div class="box"><div id="d" class="big">0</div><div class="label">Dias</div></div>
+      <div class="box"><div id="h" class="big">0</div><div class="label">Horas</div></div>
+      <div class="box"><div id="m" class="big">0</div><div class="label">Minutos</div></div>
+      <div class="box"><div id="s" class="big">0</div><div class="label">Segundos</div></div>
+    </div>
+    <div class="progress-container">
+      <div class="progress"><div class="fill" id="fill"></div></div>
+      <div class="center pct-text" id="pct">0%</div>
+    </div>
+  </div>
 
-    <main class="container">
-        <div class="glass-card">
-            <!-- Slideshow -->
-            <div class="slideshow">
-                <img id="slide-img" src="" alt="Nossa Foto">
-            </div>
+  <div class="card">
+    <div class="slideshow-container">
+      <div class="slide active"><img src="https://i.postimg.cc/kXpw0qYT/IMG-6327.jpg" alt="Foto 1"></div>
+      <div class="slide"><img src="https://i.postimg.cc/FKdKTgdd/C98EF96A-B278-4AAF-92AB-D9A73107C575.jpg" alt="Foto 2"></div>
+      <div class="slide"><img src="https://i.postimg.cc/FKdKTgd7/ECFA4E70-3720-4737-8DC5-1F167108E8F2.jpg" alt="Foto 3"></div>
+      <div class="slide"><img src="https://i.postimg.cc/k565TF6R/fqs-2026-01-16-200940-068.jpg" alt="Foto 4"></div>
+      <div class="slide"><img src="https://i.postimg.cc/9fRfLtRD/IMG-5974.jpg" alt="Foto 5"></div>
+    </div>
+    
+    <div class="message-area">
+      <p>Mo, cada dia que passa me sinto incompleto por não ter você por perto de mim. Sonho com você todos os dias e todas as noites e não vejo a hora te de ter do meu lado. Sei que não tenho sido o melhor namorado, muito menos o melhor homem para você chamar de companheiro, mas quero sempre fazer de tudo pra melhorar, resolver os problemas que tenho causado. Eu nunca sei quando é o último bom dia ou boa noite, então odeio pensar que te fiz chorar ou que fomos dormir brigados. Eu não sou feliz sem você, por mais aqui as experiências tem sido boas, nada supera as coisas que vivemos, as noites vendo filmes e fazendo fondue. Eu espero que eu possa dar motivos para voce me perdoar, não quero que se sinta mal comigo nunca. Quero que você tenha um dia maravilhoso e assim que puder, me liga porque não tem nada melhor no mundo do que ouvir a sua voz e ficar falando com você (mesmo comigo igual zumbi de manhã). Eu te amo muito, nunca vou amar ninguém no mundo que não seja você. Deixei esse mapa aqui embaixo pra você acompanhar a minha chegada até você - Vulgo meu eterno amor.<span class="heart-pulse">❤️</span></p>
+    </div>
+  </div>
 
-            <!-- Contador -->
-            <div class="content">
-                <h1>❤️Tempo para ver Mo</h1>
-                <div id="timer">
-                    <div class="t-unit"><span id="days">00</span><label>Dias</label></div>
-                    <div class="t-unit"><span id="hours">00</span><label>Horas</label></div>
-                    <div class="t-unit"><span id="minutes">00</span><label>Min</label></div>
-                    <div class="t-unit"><span id="seconds">00</span><label>Seg</label></div>
-                </div>
-                
-                <button onclick="checkAdmin()" class="btn-config">⚙️ Ajustar Data</button>
-            </div>
-        </div>
-    </main>
+  <div class="card map-card">
+    <div class="header">Kuala Lumpur 🇲🇾 → Rio de Janeiro 🇧🇷</div>
+    <div id="mapWrap">
+      <img id="mapImage" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Equirectangular-projection-topographic-world.jpg/1280px-Equirectangular-projection-topographic-world.jpg" alt="Mapa">
+      
+      <svg class="overlay" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
+          </filter>
+        </defs>
 
-    <script src="script.js"></script>
+        <path id="route" d="M785 235 Q600 120 380 305" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4" stroke-dasharray="8 8"/>
+        <path id="done" d="M785 235 Q600 120 380 305" fill="none" stroke="#ff4f87" stroke-width="6" filter="url(#shadow)"/>
+
+        <circle cx="785" cy="235" r="8" fill="#fff" stroke="#ff4f87" stroke-width="4" filter="url(#shadow)"/>
+        <circle cx="380" cy="305" r="8" fill="#fff" stroke="#ff4f87" stroke-width="4" filter="url(#shadow)"/>
+
+        <text x="650" y="215" fill="white" font-family="'Inter', sans-serif" font-size="16" font-weight="600" filter="url(#shadow)">
+          Kuala Lumpur 🇲🇾
+        </text>
+
+        <text x="390" y="335" fill="white" font-family="'Inter', sans-serif" font-size="16" font-weight="600" filter="url(#shadow)">
+          Rio de Janeiro 🇧🇷
+        </text>
+
+        <g id="plane">
+          <text class="floating-plane" x="-16" y="12" font-size="32" filter="url(#shadow)">✈️</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+// CONFIGURAÇÃO DE DATAS
+const departureDate = new Date("2026-07-06T00:00:00");
+const reunionDate   = new Date("2026-08-06T07:00:00");
+
+// LÓGICA DO SLIDESHOW
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+
+function nextSlide() {
+  slides[currentSlide].classList.remove('active');
+  currentSlide = (currentSlide + 1) % slides.length;
+  slides[currentSlide].classList.add('active');
+}
+setInterval(nextSlide, 3500); // Muda a foto a cada 3.5 segundos
+
+// LÓGICA DO CONTADOR E MAPA
+const route = document.getElementById("route");
+const done = document.getElementById("done");
+const plane = document.getElementById("plane");
+const length = route.getTotalLength();
+
+done.style.strokeDasharray = length;
+done.style.strokeDashoffset = length;
+
+function update(){
+ const now = new Date();
+
+ let progress = (now - departureDate) / (reunionDate - departureDate);
+ progress = Math.max(0, Math.min(progress, 1));
+
+ const diff = Math.max(0, reunionDate - now);
+
+ document.getElementById("d").textContent = Math.floor(diff / 86400000);
+ document.getElementById("h").textContent = Math.floor(diff / 3600000) % 24;
+ document.getElementById("m").textContent = Math.floor(diff / 60000) % 60;
+ document.getElementById("s").textContent = Math.floor(diff / 1000) % 60;
+
+ document.getElementById("fill").style.width = (progress * 100) + "%";
+ document.getElementById("pct").textContent = (progress * 100).toFixed(2) + "% da jornada concluída";
+
+ done.style.strokeDashoffset = length * (1 - progress);
+
+ const p = route.getPointAtLength(length * progress);
+ const p2 = route.getPointAtLength(Math.min(length, (length * progress) + 1));
+ const angle = Math.atan2(p2.y - p.y, p2.x - p.x) * 180 / Math.PI;
+
+ plane.setAttribute(
+   "transform",
+   `translate(${p.x},${p.y}) rotate(${angle})`
+ );
+
+ if(progress >= 1){
+   document.getElementById("pct").textContent = "❤️ Finalmente juntos ❤️";
+ }
+}
+
+update();
+setInterval(update, 1000);
+</script>
 </body>
 </html>
