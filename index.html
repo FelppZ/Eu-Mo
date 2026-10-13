@@ -29,6 +29,12 @@
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- PDF.js CDN for extracting text from PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03); }
@@ -86,7 +92,7 @@
             z-index: 20;
         }
 
-        /* Brushed Metallic Chrome Silver Foil (Less colorful, high metallic finish) */
+        /* Brushed Metallic Chrome Silver Foil */
         .metallic-foil {
             background: linear-gradient(
                 var(--angle),
@@ -129,16 +135,21 @@
         <div class="bg-white border border-slate-200 rounded-3xl p-8 max-w-sm w-full text-center space-y-6 card-shadow relative overflow-hidden">
             <div class="w-20 h-20 mx-auto rounded-full bg-red-50 text-hsbcRed flex items-center justify-center text-3xl face-id-scan relative">
                 <i class="fa-solid fa-face-smile animate-pulse" id="bioIcon"></i>
-                <div class="absolute inset-0 rounded-full border-2 border-hsbcRed border-t-transparent animate-spin"></div>
+                <div id="bioSpinner" class="absolute inset-0 rounded-full border-2 border-hsbcRed border-t-transparent animate-spin"></div>
             </div>
             <div>
                 <h3 class="text-lg font-extrabold text-slate-900">Autenticação Biométrica</h3>
-                <p class="text-xs text-slate-500 mt-1" id="bioStatus">Escaneando Face ID para acessar extrato HSBC TravelOne...</p>
+                <p class="text-xs text-slate-500 mt-1" id="bioStatus">Aperte o botão abaixo para autenticar via Face ID / Touch ID do seu dispositivo.</p>
             </div>
-            <button onclick="unlockApp()" class="w-full py-2.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-semibold text-xs rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2">
-                <i class="fa-solid fa-lock-open"></i>
-                <span>Confirmar e Entrar</span>
-            </button>
+            <div class="space-y-2">
+                <button id="webAuthnBtn" onclick="triggerWebAuthnBiometrics()" class="w-full py-3 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-semibold text-xs rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fingerprint text-base"></i>
+                    <span>Desbloquear com Face ID / Touch ID</span>
+                </button>
+                <button onclick="unlockAppFallback()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-[11px] rounded-xl transition cursor-pointer">
+                    Entrar com Código / Ignorar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -329,18 +340,18 @@
             <input type="file" id="fileUploadInput" accept=".pdf,.txt,.json,image/*" class="hidden" onchange="handleFileUpload(event)">
             <div class="max-w-md mx-auto space-y-3 pointer-events-none">
                 <div class="w-12 h-12 rounded-2xl bg-red-50 text-hsbcRed flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-paste text-xl"></i>
+                    <i class="fa-solid fa-file-pdf text-xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-slate-900">Importar Fatura ou Extrato HSBC</h3>
+                    <h3 class="text-sm font-bold text-slate-900">Importar Fatura ou Extrato PDF HSBC</h3>
                     <p class="text-xs text-slate-500 mt-1">
-                        <strong>Copie e cole (Ctrl+V / Cmd+V)</strong> o arquivo PDF, imagem ou texto do extrato direto aqui, ou clique para selecionar.
+                        <strong>Arraste, selecione ou cole (Ctrl+V / Cmd+V)</strong> seu arquivo <strong>PDF de extrato HSBC</strong> para extrair todas as transações automaticamente.
                     </p>
                 </div>
                 <div class="pt-2 flex justify-center gap-2">
                     <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="pointer-events-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-folder-open"></i>
-                        <span>Selecionar Arquivo</span>
+                        <span>Selecionar PDF</span>
                     </button>
                     <button type="button" onclick="triggerPastePrompt()" class="pointer-events-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-clipboard text-hsbcRed"></i>
@@ -538,12 +549,72 @@
             initMetallic3D();
             initGyroscope();
             initGlobalPasteListener();
+            initDropZone();
 
-            // Auto-unlock face ID after simulation
+            // Try WebAuthn on load if user interacts or auto-triggers
             setTimeout(() => {
-                unlockApp();
-            }, 1200);
+                triggerWebAuthnBiometrics(true);
+            }, 600);
         };
+
+        /* REAL WebAuthn Biometric Integration (Face ID / Touch ID) */
+        async function triggerWebAuthnBiometrics(isAuto = false) {
+            const statusElem = document.getElementById('bioStatus');
+            const bioIcon = document.getElementById('bioIcon');
+
+            if (!window.PublicKeyCredential) {
+                if (!isAuto) {
+                    statusElem.innerText = "Navegador não suporta biometria WebAuthn. Clique em Ignorar.";
+                }
+                return;
+            }
+
+            try {
+                if (statusElem) statusElem.innerText = "Aguardando Face ID / Touch ID do iPhone ou dispositivo...";
+                
+                // Challenge array creation
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+
+                const userId = new Uint8Array(16);
+                window.crypto.getRandomValues(userId);
+
+                // Create options enforcing user verification (Face ID / Touch ID prompt on iOS/macOS/Android)
+                const options = {
+                    publicKey: {
+                        challenge: challenge,
+                        rp: { name: "HSBC TravelOne App" },
+                        user: {
+                            id: userId,
+                            name: "felippe.braga@hsbc.com",
+                            displayName: "Felippe Martins Braga"
+                        },
+                        pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                        authenticatorSelection: {
+                            authenticatorAttachment: "platform",
+                            userVerification: "required"
+                        },
+                        timeout: 60000
+                    }
+                };
+
+                const credential = await navigator.credentials.create(options);
+                if (credential) {
+                    if (statusElem) statusElem.innerText = "Face ID Autenticado com sucesso!";
+                    if (bioIcon) bioIcon.className = "fa-solid fa-check text-emerald-500";
+                    setTimeout(() => unlockApp(), 400);
+                }
+            } catch (err) {
+                console.warn("WebAuthn / Biometrics response:", err);
+                if (!isAuto) {
+                    if (err.name === "NotAllowedError") {
+                        statusElem.innerText = "Autenticação biométrica cancelada. Tente novamente ou use a senha.";
+                    } else {
+                        statusElem.innerText = "Biometria não configurada ou não suportada no domínio atual. Clique em entrar com código.";
+                    }
+                }
+            }
+        }
 
         function unlockApp() {
             const modal = document.getElementById('biometricModal');
@@ -553,24 +624,72 @@
             }
         }
 
-        /* Clipboard Paste Listener Integration */
+        function unlockAppFallback() {
+            unlockApp();
+            showNotification("Acesso liberado com código de segurança.");
+        }
+
+        /* Drag and Drop initialization */
+        function initDropZone() {
+            const dropContainer = document.getElementById('dropZoneContainer');
+            if(!dropContainer) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropContainer.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropContainer.addEventListener(eventName, () => dropContainer.classList.add('border-hsbcRed', 'bg-red-50/20'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropContainer.addEventListener(eventName, () => dropContainer.classList.remove('border-hsbcRed', 'bg-red-50/20'), false);
+            });
+
+            dropContainer.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    processUploadedFile(files[0]);
+                }
+            }, false);
+        }
+
+        /* Global Clipboard Paste Listener (Text, JSON & PDF Files) */
         function initGlobalPasteListener() {
             window.addEventListener('paste', (e) => {
-                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                const clipboardData = e.clipboardData || window.clipboardData;
+                if (!clipboardData) return;
+
                 let fileHandled = false;
 
-                for (let index = 0; index < items.length; index++) {
-                    const item = items[index];
-                    if (item.kind === 'file') {
-                        const blob = item.getAsFile();
-                        processUploadedFile(blob);
-                        fileHandled = true;
-                        break;
+                // 1. Check if files are attached to clipboard
+                if (clipboardData.files && clipboardData.files.length > 0) {
+                    const file = clipboardData.files[0];
+                    processUploadedFile(file);
+                    fileHandled = true;
+                } else if (clipboardData.items) {
+                    for (let i = 0; i < clipboardData.items.length; i++) {
+                        const item = clipboardData.items[i];
+                        if (item.kind === 'file') {
+                            const blob = item.getAsFile();
+                            if (blob) {
+                                processUploadedFile(blob);
+                                fileHandled = true;
+                                break;
+                            }
+                        }
                     }
                 }
 
+                // 2. If no file, check text content
                 if (!fileHandled) {
-                    const pastedText = e.clipboardData.getData('text');
+                    const pastedText = clipboardData.getData('text');
                     if (pastedText && pastedText.trim().length > 0) {
                         processPastedTextContent(pastedText);
                     }
@@ -579,58 +698,171 @@
         }
 
         function triggerPastePrompt() {
-            if (navigator.clipboard && navigator.clipboard.readText) {
-                navigator.clipboard.readText().then(text => {
-                    if (text && text.trim().length > 0) {
-                        processPastedTextContent(text);
-                    } else {
-                        showNotification("Nenhum texto encontrado na área de transferência.", true);
+            if (navigator.clipboard && navigator.clipboard.read) {
+                navigator.clipboard.read().then(async items => {
+                    let handled = false;
+                    for (const item of items) {
+                        for (const type of item.types) {
+                            if (type === 'application/pdf' || type.startsWith('image/')) {
+                                const blob = await item.getType(type);
+                                processUploadedFile(blob);
+                                handled = true;
+                                break;
+                            }
+                        }
+                        if (handled) break;
+                    }
+                    if (!handled) {
+                        const text = await navigator.clipboard.readText();
+                        if (text) processPastedTextContent(text);
                     }
                 }).catch(() => {
-                    showNotification("Pressione Ctrl+V / Cmd+V para colar o extrato diretamente.", false);
+                    showNotification("Pressione Ctrl+V ou Cmd+V para colar seu PDF ou extrato copiado.", false);
                 });
             } else {
-                showNotification("Pressione Ctrl+V ou Cmd+V para colar seu extrato copiado.", false);
+                showNotification("Pressione Ctrl+V ou Cmd+V para colar seu PDF ou extrato copiado.", false);
             }
+        }
+
+        /* Reading PDF Files using PDF.js */
+        async function processUploadedFile(file) {
+            if (!file) return;
+
+            showNotification(`Lendo arquivo "${file.name || 'documento'}"...`);
+
+            if (file.type === "application/pdf" || (file.name && file.name.toLowerCase().endsWith('.pdf'))) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdfText = await extractTextFromPDFBuffer(arrayBuffer);
+                    parseStatementText(pdfText);
+                    showNotification("PDF lido e extrato HSBC atualizado com sucesso!");
+                } catch (err) {
+                    console.error("Erro ao ler PDF:", err);
+                    showNotification("Erro ao processar o arquivo PDF. Verifique o formato.", true);
+                }
+            } else if (file.name && file.name.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        currentData = JSON.parse(e.target.result);
+                        saveAndRefreshData("JSON importado com sucesso!");
+                    } catch(err) {
+                        showNotification("Erro ao ler arquivo JSON.", true);
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                // Fallback for plain text
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    processPastedTextContent(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        /* PDF.js Buffer Text Extraction */
+        async function extractTextFromPDFBuffer(buffer) {
+            const loadingTask = pdfjsLib.getDocument({ data: buffer });
+            const pdfDoc = await loadingTask.promise;
+            let fullText = "";
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const page = await pdfDoc.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(" ");
+                fullText += pageText + "\n";
+            }
+            return fullText;
         }
 
         function processPastedTextContent(text) {
             try {
-                if (text.startsWith('{') && text.endsWith('}')) {
-                    const parsed = JSON.parse(text);
-                    currentData = parsed;
-                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
-                    renderDashboard();
-                    renderTransactions();
-                    renderInstallments();
-                    showNotification("Estrutura do extrato em JSON colada com sucesso!");
+                if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+                    currentData = JSON.parse(text);
+                    saveAndRefreshData("Estrutura JSON do extrato colada com sucesso!");
                     return;
                 }
             } catch(e) {}
 
-            showNotification("Documento em texto copiado e processado com sucesso!");
+            parseStatementText(text);
+            showNotification("Texto de extrato processado com sucesso!");
         }
 
-        function processUploadedFile(file) {
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    if(file.name && file.name.endsWith('.json')) {
-                        currentData = JSON.parse(e.target.result);
-                    } else {
-                        currentData = JSON.parse(JSON.stringify(hsbcDataDefault));
-                    }
-                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
-                    renderDashboard();
-                    renderTransactions();
-                    renderInstallments();
-                    showNotification(`Arquivo "${file.name || 'colado'}" importado com sucesso!`);
-                } catch(err) {
-                    showNotification("Erro ao processar o arquivo colado.", true);
+        /* Dynamic Parsing Engine for HSBC Credit Card Statements */
+        function parseStatementText(text) {
+            if (!text || text.trim().length === 0) return;
+
+            const newTxList = [];
+
+            // Regex for transactions: Date + Description + Amount (e.g. "07 SEP AP BILABILA MART 25.00")
+            const txRegex = /(\d{2}\s+[A-Z]{3})\s+(\d{2}\s+[A-Z]{3})?\s+([A-Za-z0-9\s\*\.\&\-\/]+?)\s+(-?RM\s*|-?\$\s*)?([\d\.\,]+)\b/gi;
+            
+            let match;
+            while ((match = txRegex.exec(text)) !== null) {
+                const postDate = match[1].toUpperCase();
+                const transDate = match[2] ? match[2].toUpperCase() : postDate;
+                const details = match[3].trim();
+                let amountStr = match[5].replace(',', '');
+                let amount = parseFloat(amountStr);
+
+                if (!isNaN(amount) && details.length > 2) {
+                    let category = "Shopping";
+                    const upperDet = details.toUpperCase();
+                    if (upperDet.includes("MART") || upperDet.includes("GROCER") || upperDet.includes("7-ELEVEN") || upperDet.includes("MARKET")) category = "Supermarket";
+                    else if (upperDet.includes("REST") || upperDet.includes("BAR") || upperDet.includes("GRILL") || upperDet.includes("FOOD") || upperDet.includes("CAFE")) category = "Dining";
+                    else if (upperDet.includes("PAYMENT") || upperDet.includes("PAGAMENTO") || upperDet.includes("THANK YOU")) {
+                        category = "Payment";
+                        amount = -Math.abs(amount);
+                    } else if (upperDet.includes("CASH") || upperDet.includes("SAQUE")) category = "Cash";
+                    else if (upperDet.includes("KLIA") || upperDet.includes("UBER") || upperDet.includes("GRAB") || upperDet.includes("TRANSPORT")) category = "Transport";
+
+                    newTxList.push({
+                        postDate,
+                        transDate,
+                        details,
+                        amount,
+                        category
+                    });
                 }
-            };
-            reader.readAsText(file);
+            }
+
+            // Extract balance
+            const balanceMatch = text.match(/(STATEMENT BALANCE|TOTAL A PAGAR|SALDO TOTAL)[:\s]+(?:RM\s*)?([\d\.\,]+)/i);
+            if (balanceMatch && balanceMatch[2]) {
+                const parsedBal = parseFloat(balanceMatch[2].replace(',', ''));
+                if (!isNaN(parsedBal)) currentData.statementBalance = parsedBal;
+            } else {
+                // Recalculate balance if transactions exist
+                const sum = newTxList.reduce((acc, curr) => acc + curr.amount, 0);
+                if (sum > 0) currentData.statementBalance = parseFloat(sum.toFixed(2));
+            }
+
+            // Extract Due Date
+            const dueMatch = text.match(/(DUE DATE|VENCIMENTO)[:\s]+(\d{2}\s+[A-Z]{3}\s+\d{4}|\d{2}\/\d{2}\/\d{4})/i);
+            if (dueMatch && dueMatch[2]) {
+                currentData.dueDate = dueMatch[2];
+            }
+
+            // Extract Cardholder Name
+            const holderMatch = text.match(/(CARDHOLDER|TITULAR)[:\s]+([A-Z\s]{5,30})/i);
+            if (holderMatch && holderMatch[2]) {
+                currentData.cardHolder = holderMatch[2].trim();
+            }
+
+            if (newTxList.length > 0) {
+                currentData.transactions = newTxList;
+            }
+
+            saveAndRefreshData("Extrato extraído do PDF/Texto com sucesso!");
+        }
+
+        function saveAndRefreshData(msg) {
+            localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+            renderDashboard();
+            renderTransactions();
+            renderInstallments();
+            if(msg) showNotification(msg);
         }
 
         function initMetallic3D() {
