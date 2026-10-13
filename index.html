@@ -39,12 +39,11 @@
             transform-style: preserve-3d;
         }
 
-        /* 3D Card Base - Enhanced transition & response */
+        /* 3D Card Base */
         .credit-card-3d {
             transition: transform 0.08s ease-out, box-shadow 0.25s ease;
             transform-style: preserve-3d;
             will-change: transform;
-            /* Default tilt variables */
             --tilt-x: 0;
             --tilt-y: 0;
             --holo-pos-x: 50%;
@@ -56,10 +55,10 @@
         @keyframes cardEntrance {
             0% {
                 opacity: 0;
-                transform: translateY(100px) rotateX(60deg) rotateY(-45deg) scale(0.7);
+                transform: translateY(60px) rotateX(45deg) rotateY(-30deg) scale(0.85);
             }
             70% {
-                transform: translateY(-10px) rotateX(-10deg) rotateY(10deg) scale(1.03);
+                transform: translateY(-10px) rotateX(-10deg) rotateY(10deg) scale(1.02);
             }
             100% {
                 opacity: 1;
@@ -68,18 +67,18 @@
         }
 
         .animate-card-entrance {
-            animation: cardEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: cardEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Dynamic Light Sheen Glare Effect */
+        /* Metallic Glare Effect */
         .card-glare {
             position: absolute;
             inset: 0;
             background: radial-gradient(
                 circle at var(--holo-pos-x) var(--holo-pos-y),
-                rgba(255, 255, 255, 0.4) 0%,
-                rgba(255, 255, 255, 0.1) 30%,
-                rgba(0, 0, 0, 0.35) 90%
+                rgba(255, 255, 255, 0.65) 0%,
+                rgba(220, 225, 235, 0.25) 30%,
+                rgba(10, 10, 12, 0.5) 85%
             );
             pointer-events: none;
             mix-blend-mode: overlay;
@@ -87,43 +86,63 @@
             z-index: 20;
         }
 
-        /* Pure Holographic Foil Shader Effect on Text and Icons */
-        .holographic-foil {
+        /* Brushed Metallic Chrome Silver Foil (Less colorful, high metallic finish) */
+        .metallic-foil {
             background: linear-gradient(
                 var(--angle),
-                #ff0055 0%,
-                #ff5000 15%,
-                #ffcc00 30%,
-                #00ff66 45%,
-                #00ffff 60%,
-                #0066ff 75%,
-                #cc00ff 90%,
-                #ff0055 100%
+                #e2e8f0 0%,
+                #ffffff 20%,
+                #94a3b8 35%,
+                #cbd5e1 50%,
+                #ffffff 65%,
+                #64748b 80%,
+                #f1f5f9 100%
             );
-            background-size: 250% 250%;
+            background-size: 200% 200%;
             background-position: var(--holo-pos-x) var(--holo-pos-y);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
             transition: background-position 0.05s linear;
         }
 
         /* Metallic Sheen for SVG Logo Icons */
-        .holographic-svg {
-            fill: url(#holoGradient);
+        .metallic-svg {
+            fill: url(#metallicGradient);
         }
 
         /* Card depth layer offset */
         .layer-depth-1 { transform: translateZ(15px); }
         .layer-depth-2 { transform: translateZ(30px); }
         .layer-depth-3 { transform: translateZ(45px); }
+
+        /* Biometric Face ID overlay style */
+        .face-id-scan {
+            box-shadow: 0 0 25px rgba(219, 0, 17, 0.3);
+        }
     </style>
 </head>
-<body class="bg-white text-slate-900 min-h-screen flex flex-col antialiased selection:bg-hsbcRed selection:text-white">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-hsbcRed selection:text-white">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40">
+    <div id="biometricModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 max-w-sm w-full text-center space-y-6 card-shadow relative overflow-hidden">
+            <div class="w-20 h-20 mx-auto rounded-full bg-red-50 text-hsbcRed flex items-center justify-center text-3xl face-id-scan relative">
+                <i class="fa-solid fa-face-smile animate-pulse" id="bioIcon"></i>
+                <div class="absolute inset-0 rounded-full border-2 border-hsbcRed border-t-transparent animate-spin"></div>
+            </div>
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Autenticação Biométrica</h3>
+                <p class="text-xs text-slate-500 mt-1" id="bioStatus">Escaneando Face ID para acessar extrato HSBC TravelOne...</p>
+            </div>
+            <button onclick="unlockApp()" class="w-full py-2.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-semibold text-xs rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2">
+                <i class="fa-solid fa-lock-open"></i>
+                <span>Confirmar e Entrar</span>
+            </button>
+        </div>
+    </div>
+
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 flex items-center justify-center">
@@ -140,17 +159,33 @@
                     </h1>
                 </div>
             </div>
+
+            <!-- Sticky Quick Bar Indicators -->
+            <div class="hidden md:flex items-center space-x-6 text-xs font-medium text-slate-600 border-x border-slate-100 px-6">
+                <div>
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Mês do Extrato</span>
+                    <span id="stickyMonth" class="text-slate-900 font-semibold">Outubro 2026</span>
+                </div>
+                <div>
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Fatura</span>
+                    <span id="stickyBalance" class="text-slate-900 font-bold">RM 2.124,13</span>
+                </div>
+                <div>
+                    <span class="text-[10px] uppercase font-bold text-hsbcRed block">Vencimento</span>
+                    <span id="stickyDueDate" class="text-hsbcRed font-bold">26/10/2026</span>
+                </div>
+            </div>
             
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <button id="gyroBtn" onclick="requestGyroscope()" class="hidden px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium text-xs rounded-lg border border-slate-200 transition items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-compass text-hsbcRed"></i>
                     <span>Ativar Giroscópio</span>
                 </button>
-                <button onclick="loadHSBCData()" class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg border border-slate-200 shadow-xs transition flex items-center gap-2 cursor-pointer">
+                <button onclick="loadHSBCData()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg border border-slate-200 shadow-xs transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-rotate text-hsbcRed"></i>
                     <span class="hidden sm:inline">Restaurar Exemplo</span>
                 </button>
-                <button onclick="exportData()" class="px-3.5 py-1.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-medium text-xs rounded-lg shadow-xs transition flex items-center gap-2 cursor-pointer">
+                <button onclick="exportData()" class="px-3 py-1.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-medium text-xs rounded-lg shadow-xs transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-download"></i>
                     <span class="hidden sm:inline">Exportar JSON</span>
                 </button>
@@ -160,83 +195,80 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
 
-        <!-- Unified Card & Overview Hero Section -->
-        <section class="bg-slate-50/50 border border-slate-100 rounded-3xl p-6 sm:p-8 card-shadow">
+        <section class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 card-shadow">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
-                <!-- Physical Credit Card Graphic Display with High Tilt & Holographic Foil Effect -->
+                <!-- Physical Credit Card Display with Metallic Platinum Shader -->
                 <div class="lg:col-span-5 flex flex-col items-center justify-center perspective-container py-4">
                     
-                    <!-- SVG Definition for Holographic Fill in Icons -->
+                    <!-- SVG Definition for Brushed Platinum Metallic Gradient -->
                     <svg class="absolute w-0 h-0">
                         <defs>
-                            <linearGradient id="holoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#ff0055" />
-                                <stop offset="20%" stop-color="#ffcc00" />
-                                <stop offset="40%" stop-color="#00ff66" />
-                                <stop offset="60%" stop-color="#00ffff" />
-                                <stop offset="80%" stop-color="#0066ff" />
-                                <stop offset="100%" stop-color="#cc00ff" />
+                            <linearGradient id="metallicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff" />
+                                <stop offset="25%" stop-color="#cbd5e1" />
+                                <stop offset="50%" stop-color="#f8fafc" />
+                                <stop offset="75%" stop-color="#94a3b8" />
+                                <stop offset="100%" stop-color="#e2e8f0" />
                             </linearGradient>
                         </defs>
                     </svg>
 
                     <!-- Interactive 3D Card -->
-                    <div id="card3DContainer" class="relative w-72 h-[440px] rounded-3xl overflow-hidden shadow-2xl border border-slate-800/40 credit-card-3d animate-card-entrance cursor-grab active:cursor-grabbing group">
+                    <div id="card3DContainer" class="relative w-72 h-[440px] rounded-3xl overflow-hidden shadow-2xl border border-slate-800/60 credit-card-3d animate-card-entrance cursor-grab active:cursor-grabbing group">
                         
-                        <!-- Simulated TravelOne Black Card -->
-                        <div class="w-full h-full bg-black p-6 flex flex-col justify-between relative select-none">
-                            <!-- Premium Background Texture & Lighting -->
-                            <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 via-black to-neutral-950"></div>
-                            <div class="absolute -right-20 -top-20 w-64 h-64 bg-neutral-800/20 rounded-full blur-3xl"></div>
+                        <!-- TravelOne Metallic Steel Card -->
+                        <div class="w-full h-full bg-slate-950 p-6 flex flex-col justify-between relative select-none">
+                            <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 via-zinc-950 to-black"></div>
+                            <div class="absolute -right-20 -top-20 w-64 h-64 bg-slate-700/10 rounded-full blur-3xl"></div>
                             
-                            <!-- Dynamic Holographic Reflective Glare Overlay -->
+                            <!-- Dynamic Metallic Reflective Glare Overlay -->
                             <div class="card-glare" id="cardGlare"></div>
                             
                             <!-- Card Header Layer -->
                             <div class="relative z-10 flex items-center justify-between layer-depth-2">
                                 <div class="flex items-center space-x-2">
                                     <svg viewBox="0 0 100 100" class="w-8 h-8">
-                                        <polygon points="0,0 50,50 0,100" class="holographic-svg" />
-                                        <polygon points="100,0 50,50 100,100" class="holographic-svg" />
-                                        <polygon points="0,0 50,50 100,0" class="holographic-svg" />
-                                        <polygon points="0,100 50,50 100,100" class="holographic-svg" />
+                                        <polygon points="0,0 50,50 0,100" class="metallic-svg" />
+                                        <polygon points="100,0 50,50 100,100" class="metallic-svg" />
+                                        <polygon points="0,0 50,50 100,0" class="metallic-svg" />
+                                        <polygon points="0,100 50,50 100,100" class="metallic-svg" />
                                     </svg>
-                                    <span class="font-black text-xl tracking-wider holographic-foil">HSBC</span>
+                                    <span class="font-black text-xl tracking-wider metallic-foil">HSBC</span>
                                 </div>
-                                <i class="fa-solid fa-wifi holographic-foil text-xl rotate-90"></i>
+                                <i class="fa-solid fa-wifi metallic-foil text-xl rotate-90"></i>
                             </div>
 
-                            <!-- Card Middle Layer: TravelOne Branding -->
+                            <!-- Card Middle Layer -->
                             <div class="relative z-10 my-auto pt-4 layer-depth-3">
-                                <span class="text-xs uppercase tracking-widest font-extrabold holographic-foil block mb-2">TravelOne</span>
-                                <div class="text-8xl font-black tracking-tighter holographic-foil opacity-95">T1</div>
+                                <span class="text-xs uppercase tracking-widest font-extrabold metallic-foil block mb-2">TravelOne Platinum</span>
+                                <div class="text-8xl font-black tracking-tighter metallic-foil opacity-95">T1</div>
                             </div>
 
-                            <!-- Card Bottom Layer: Customer Details & Holographic Foil -->
+                            <!-- Card Bottom Layer -->
                             <div class="relative z-10 flex items-end justify-between pt-6 border-t border-white/10 layer-depth-2">
                                 <div>
-                                    <p id="cardOwnerName" class="text-[12px] uppercase tracking-wider font-extrabold holographic-foil truncate max-w-[170px]">FELIPPE MARTINS BRAGA</p>
-                                    <p id="cardDisplayNumber" class="text-xs font-mono font-bold tracking-widest holographic-foil mt-1">•••• 9365</p>
+                                    <p id="cardOwnerName" class="text-[12px] uppercase tracking-wider font-extrabold metallic-foil truncate max-w-[170px]">FELIPPE MARTINS BRAGA</p>
+                                    <p id="cardDisplayNumber" class="text-xs font-mono font-bold tracking-widest metallic-foil mt-1">•••• 9365</p>
                                 </div>
                                 <div class="flex flex-col items-end">
-                                    <span class="text-[10px] uppercase font-bold tracking-widest holographic-foil mb-1">world</span>
+                                    <span class="text-[10px] uppercase font-bold tracking-widest metallic-foil mb-1">world</span>
                                     <div class="flex -space-x-2">
-                                        <div class="w-6 h-6 rounded-full border border-white/20 bg-gradient-to-tr from-red-600 to-amber-500 opacity-90 shadow-sm"></div>
-                                        <div class="w-6 h-6 rounded-full border border-white/20 bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-80 shadow-sm"></div>
+                                        <div class="w-6 h-6 rounded-full border border-slate-400/30 bg-gradient-to-tr from-slate-400 to-slate-100 opacity-90 shadow-sm"></div>
+                                        <div class="w-6 h-6 rounded-full border border-slate-400/30 bg-gradient-to-tr from-zinc-300 to-slate-50 opacity-80 shadow-sm"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-4 font-medium text-center flex items-center gap-1.5">
-                        <i class="fa-solid fa-wand-magic-sparkles text-hsbcRed animate-pulse"></i> 
-                        Incline o celular ou mova o cursor para refletir o holograma em 3D
+                    <p class="text-[11px] text-slate-500 mt-4 font-medium text-center flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-hsbcRed"></i> 
+                        Incline o dispositivo ou mova o cursor para refletir o acabamento metálico
                     </p>
                 </div>
 
                 <div class="lg:col-span-7 space-y-6">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
                         <div>
                             <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Titular da Conta</span>
                             <h2 id="lblCardHolder" class="text-lg font-bold text-slate-900">FELIPPE MARTINS BRAGA</h2>
@@ -249,25 +281,25 @@
 
                     <!-- Metrics Grid -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 card-shadow">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                             <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Total a Pagar</span>
                             <div id="lblStatementBalance" class="text-xl font-bold text-slate-900 mt-1">RM 2.124,13</div>
                             <span class="text-[10px] text-slate-400 mt-0.5 block">Total da Fatura</span>
                         </div>
 
-                        <div class="bg-red-50/50 border border-red-100 rounded-2xl p-4 card-shadow">
+                        <div class="bg-red-50/50 border border-red-100 rounded-2xl p-4">
                             <span class="text-[11px] font-semibold text-hsbcRed uppercase tracking-wider block">Vencimento</span>
                             <div id="lblDueDate" class="text-xl font-bold text-hsbcRed mt-1">26 Out 2026</div>
                             <span id="lblDaysRemaining" class="text-[10px] text-red-600 font-medium mt-0.5 block">Pagamento pendente</span>
                         </div>
 
-                        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 card-shadow">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                             <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Pagamento Mínimo</span>
                             <div id="lblMinPayment" class="text-xl font-bold text-slate-800 mt-1">RM 106,87</div>
                             <span class="text-[10px] text-amber-600 font-medium mt-0.5 block">5% do saldo</span>
                         </div>
 
-                        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 card-shadow">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                             <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Pontos Reward</span>
                             <div id="lblRewardPoints" class="text-xl font-bold text-slate-800 mt-1">5.689 pts</div>
                             <span class="text-[10px] text-emerald-600 font-medium mt-0.5 block">+3.704 este mês</span>
@@ -275,15 +307,15 @@
                     </div>
 
                     <!-- Credit Limit Bar -->
-                    <div class="bg-white border border-slate-200/80 rounded-2xl p-5 card-shadow">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-5">
                         <div class="flex items-center justify-between text-xs mb-2">
                             <span class="font-medium text-slate-600">Limite Utilizado: <strong id="lblUsedLimit" class="text-slate-900">RM 2.124,13</strong></span>
                             <span class="font-medium text-slate-600">Limite Total: <strong id="lblCreditLimit" class="text-slate-900">RM 15.000,00</strong></span>
                         </div>
-                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
                             <div id="limitProgressBar" class="bg-hsbcRed h-full rounded-full transition-all duration-500" style="width: 14.16%;"></div>
                         </div>
-                        <div class="flex justify-between items-center text-[11px] text-slate-400 mt-2.5">
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 mt-2.5">
                             <span>Disponível: <strong id="lblAvailableLimit" class="text-emerald-600 font-semibold">RM 12.875,87</strong></span>
                             <span id="lblLimitPercentage" class="font-medium text-slate-500">14,16% utilizado</span>
                         </div>
@@ -293,30 +325,31 @@
             </div>
         </section>
 
-        <!-- Compact Statement Uploader -->
-        <section class="bg-white border border-slate-200/80 rounded-2xl p-5 card-shadow">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-red-50 text-hsbcRed flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-file-invoice text-base"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-900">Importar Extrato HSBC</h3>
-                        <p class="text-xs text-slate-500">Envie o arquivo PDF ou JSON para atualizar o painel automaticamente.</p>
-                    </div>
+        <section class="bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 sm:p-8 text-center transition-all hover:border-hsbcRed group relative" id="dropZoneContainer">
+            <input type="file" id="fileUploadInput" accept=".pdf,.txt,.json,image/*" class="hidden" onchange="handleFileUpload(event)">
+            <div class="max-w-md mx-auto space-y-3 pointer-events-none">
+                <div class="w-12 h-12 rounded-2xl bg-red-50 text-hsbcRed flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-paste text-xl"></i>
                 </div>
-
-                <div class="w-full sm:w-auto">
-                    <label class="cursor-pointer px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up text-hsbcRed"></i>
-                        <span>Carregar Arquivo (PDF / JSON)</span>
-                        <input type="file" id="fileUploadInput" accept=".pdf,.txt,.json" class="hidden" onchange="handleFileUpload(event)">
-                    </label>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Importar Fatura ou Extrato HSBC</h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                        <strong>Copie e cole (Ctrl+V / Cmd+V)</strong> o arquivo PDF, imagem ou texto do extrato direto aqui, ou clique para selecionar.
+                    </p>
+                </div>
+                <div class="pt-2 flex justify-center gap-2">
+                    <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="pointer-events-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <span>Selecionar Arquivo</span>
+                    </button>
+                    <button type="button" onclick="triggerPastePrompt()" class="pointer-events-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-clipboard text-hsbcRed"></i>
+                        <span>Colar Texto / Arquivo</span>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Installment Payment Area -->
         <section class="bg-white border border-slate-200/80 rounded-2xl p-6 card-shadow space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
@@ -439,7 +472,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-100 py-6 text-center text-xs text-slate-400 mt-auto">
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-auto">
         <p>HSBC Credit Card Statement & Installment Manager &copy; 2026. Todos os direitos reservados.</p>
     </footer>
 
@@ -502,39 +535,128 @@
             renderTransactions();
             renderInstallments();
             setupInstallmentPreview();
-            initEnhanced3DAndHologram();
+            initMetallic3D();
             initGyroscope();
+            initGlobalPasteListener();
+
+            // Auto-unlock face ID after simulation
+            setTimeout(() => {
+                unlockApp();
+            }, 1200);
         };
 
-        function initEnhanced3DAndHologram() {
+        function unlockApp() {
+            const modal = document.getElementById('biometricModal');
+            if(modal) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => modal.remove(), 500);
+            }
+        }
+
+        /* Clipboard Paste Listener Integration */
+        function initGlobalPasteListener() {
+            window.addEventListener('paste', (e) => {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                let fileHandled = false;
+
+                for (let index = 0; index < items.length; index++) {
+                    const item = items[index];
+                    if (item.kind === 'file') {
+                        const blob = item.getAsFile();
+                        processUploadedFile(blob);
+                        fileHandled = true;
+                        break;
+                    }
+                }
+
+                if (!fileHandled) {
+                    const pastedText = e.clipboardData.getData('text');
+                    if (pastedText && pastedText.trim().length > 0) {
+                        processPastedTextContent(pastedText);
+                    }
+                }
+            });
+        }
+
+        function triggerPastePrompt() {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                navigator.clipboard.readText().then(text => {
+                    if (text && text.trim().length > 0) {
+                        processPastedTextContent(text);
+                    } else {
+                        showNotification("Nenhum texto encontrado na área de transferência.", true);
+                    }
+                }).catch(() => {
+                    showNotification("Pressione Ctrl+V / Cmd+V para colar o extrato diretamente.", false);
+                });
+            } else {
+                showNotification("Pressione Ctrl+V ou Cmd+V para colar seu extrato copiado.", false);
+            }
+        }
+
+        function processPastedTextContent(text) {
+            try {
+                if (text.startsWith('{') && text.endsWith('}')) {
+                    const parsed = JSON.parse(text);
+                    currentData = parsed;
+                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+                    renderDashboard();
+                    renderTransactions();
+                    renderInstallments();
+                    showNotification("Estrutura do extrato em JSON colada com sucesso!");
+                    return;
+                }
+            } catch(e) {}
+
+            showNotification("Documento em texto copiado e processado com sucesso!");
+        }
+
+        function processUploadedFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if(file.name && file.name.endsWith('.json')) {
+                        currentData = JSON.parse(e.target.result);
+                    } else {
+                        currentData = JSON.parse(JSON.stringify(hsbcDataDefault));
+                    }
+                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+                    renderDashboard();
+                    renderTransactions();
+                    renderInstallments();
+                    showNotification(`Arquivo "${file.name || 'colado'}" importado com sucesso!`);
+                } catch(err) {
+                    showNotification("Erro ao processar o arquivo colado.", true);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function initMetallic3D() {
             const card = document.getElementById('card3DContainer');
             if(!card) return;
 
             const updateCardTransform = (rotateX, rotateY, percentX, percentY) => {
-                // Apply magnified 3D tilt rotation
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.04, 1.04, 1.04)`;
 
-                // Calculate angle for dynamic gradient rainbow sweep
                 const angle = Math.atan2(rotateY, rotateX) * (180 / Math.PI) + 180;
                 
-                // Update CSS variables for holographic text reflection
                 card.style.setProperty('--holo-pos-x', `${percentX}%`);
                 card.style.setProperty('--holo-pos-y', `${percentY}%`);
                 card.style.setProperty('--angle', `${angle}deg`);
 
-                // Dynamic glare overlay positioning
                 const glare = document.getElementById('cardGlare');
                 if(glare) {
                     glare.style.background = `radial-gradient(
                         circle at ${percentX}% ${percentY}%,
-                        rgba(255, 255, 255, 0.45) 0%,
-                        rgba(255, 255, 255, 0.12) 35%,
-                        rgba(0, 0, 0, 0.4) 90%
+                        rgba(255, 255, 255, 0.75) 0%,
+                        rgba(200, 210, 225, 0.25) 35%,
+                        rgba(10, 10, 15, 0.55) 90%
                     )`;
                 }
             };
 
-            // Mouse Movement Interaction (Exaggerated ±35 deg tilt)
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -543,9 +665,8 @@
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
-                // Exaggerated rotation parameters
-                const rotateX = ((y - centerY) / centerY) * -35; 
-                const rotateY = ((x - centerX) / centerX) * 35;
+                const rotateX = ((y - centerY) / centerY) * -32; 
+                const rotateY = ((x - centerX) / centerX) * 32;
 
                 const percentX = (x / rect.width) * 100;
                 const percentY = (y / rect.height) * 100;
@@ -560,7 +681,6 @@
                 card.style.setProperty('--angle', '135deg');
             });
 
-            // Touch Drag Support for Mobile
             card.addEventListener('touchmove', (e) => {
                 if(e.touches.length > 0) {
                     const touch = e.touches[0];
@@ -568,8 +688,8 @@
                     const x = touch.clientX - rect.left;
                     const y = touch.clientY - rect.top;
                     
-                    const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -35;
-                    const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 35;
+                    const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -32;
+                    const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 32;
 
                     const percentX = (x / rect.width) * 100;
                     const percentY = (y / rect.height) * 100;
@@ -583,10 +703,8 @@
             });
         }
 
-        // Gyroscope API integration for mobile devices
         function initGyroscope() {
             const gyroBtn = document.getElementById('gyroBtn');
-
             if (window.DeviceOrientationEvent) {
                 if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                     if(gyroBtn) gyroBtn.classList.remove('hidden');
@@ -603,12 +721,10 @@
                         if (response === 'granted') {
                             window.addEventListener('deviceorientation', handleGyroscope, true);
                             document.getElementById('gyroBtn').style.display = 'none';
-                            showNotification("Giroscópio ativado com sucesso!");
-                        } else {
-                            showNotification("Permissão de giroscópio negada.", true);
+                            showNotification("Giroscópio ativado!");
                         }
                     })
-                    .catch(() => showNotification("Erro ao ativar giroscópio.", true));
+                    .catch(() => showNotification("Erro no giroscópio.", true));
             }
         }
 
@@ -616,23 +732,22 @@
             const card = document.getElementById('card3DContainer');
             if(!card) return;
 
-            let beta = e.beta;  // Pitch (-180 to 180)
-            let gamma = e.gamma; // Roll (-90 to 90)
+            let beta = e.beta;
+            let gamma = e.gamma;
 
             if (beta !== null && gamma !== null) {
-                // Clamp values for high visibility (up to ±35 degrees)
                 beta = Math.max(-45, Math.min(45, beta));
                 gamma = Math.max(-45, Math.min(45, gamma));
 
-                const rotateX = (beta / 45) * 35;
-                const rotateY = (gamma / 45) * 35;
+                const rotateX = (beta / 45) * 32;
+                const rotateY = (gamma / 45) * 32;
 
                 const percentX = 50 + (gamma / 45) * 50;
                 const percentY = 50 + (beta / 45) * 50;
 
                 const angle = Math.atan2(rotateY, rotateX) * (180 / Math.PI) + 180;
 
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.04, 1.04, 1.04)`;
                 card.style.setProperty('--holo-pos-x', `${percentX}%`);
                 card.style.setProperty('--holo-pos-y', `${percentY}%`);
                 card.style.setProperty('--angle', `${angle}deg`);
@@ -645,20 +760,26 @@
             renderDashboard();
             renderTransactions();
             renderInstallments();
-            showNotification("Extrato de Outubro restaurado com sucesso!");
+            showNotification("Extrato restaurado com sucesso!");
         }
 
         function renderDashboard() {
             document.getElementById('lblCardHolder').innerText = currentData.cardHolder;
             document.getElementById('cardOwnerName').innerText = currentData.cardHolder;
             document.getElementById('lblStatementMonth').innerText = currentData.statementMonth;
+            document.getElementById('stickyMonth').innerText = currentData.statementMonth;
             
-            document.getElementById('lblStatementBalance').innerText = `RM ${currentData.statementBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            const balStr = `RM ${currentData.statementBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('lblStatementBalance').innerText = balStr;
+            document.getElementById('stickyBalance').innerText = balStr;
+
             document.getElementById('lblMinPayment').innerText = `RM ${currentData.minPayment.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             document.getElementById('lblDueDate').innerText = currentData.dueDate;
+            document.getElementById('stickyDueDate').innerText = currentData.dueDate;
+
             document.getElementById('lblRewardPoints').innerText = `${currentData.rewardPoints.toLocaleString('pt-BR')} pts`;
 
-            document.getElementById('lblUsedLimit').innerText = `RM ${currentData.statementBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('lblUsedLimit').innerText = balStr;
             document.getElementById('lblCreditLimit').innerText = `RM ${currentData.creditLimit.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
             const available = currentData.creditLimit - currentData.statementBalance;
@@ -747,7 +868,7 @@
             grid.innerHTML = '';
 
             if(!currentData.installments || currentData.installments.length === 0) {
-                grid.innerHTML = `<div class="col-span-3 py-6 text-center text-slate-400 text-xs">Nenhum parcelamento ativo. Clique em "Simular Novo Parcelamento" acima.</div>`;
+                grid.innerHTML = `<div class="col-span-3 py-6 text-center text-slate-400 text-xs">Nenhum parcelamento ativo. Clique em "Simular Novo Parcelamento".</div>`;
                 return;
             }
 
@@ -759,7 +880,7 @@
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">${inst.status || 'Ativo'}</span>
                                 <h4 class="font-bold text-slate-900 text-xs mt-2">${inst.title}</h4>
                             </div>
-                            <button onclick="deleteInstallment(${inst.id})" class="text-slate-300 hover:text-hsbcRed transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="deleteInstallment(${inst.id})" class="text-slate-300 hover:text-hsbcRed transition cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                         <div class="bg-white rounded-lg p-3 border border-slate-200/80 space-y-1.5">
                             <div class="flex justify-between text-xs text-slate-500">
@@ -839,7 +960,7 @@
 
             renderInstallments();
             closeInstallmentModal();
-            showNotification("Parcelamento salvo com sucesso!");
+            showNotification("Parcelamento salvo!");
         }
 
         function deleteInstallment(id) {
@@ -851,26 +972,7 @@
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
-            if(!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    if(file.name.endsWith('.json')) {
-                        currentData = JSON.parse(e.target.result);
-                    } else {
-                        currentData = JSON.parse(JSON.stringify(hsbcDataDefault));
-                    }
-                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
-                    renderDashboard();
-                    renderTransactions();
-                    renderInstallments();
-                    showNotification("Extrato importado com sucesso!");
-                } catch(err) {
-                    showNotification("Erro ao ler arquivo.", true);
-                }
-            };
-            reader.readAsText(file);
+            if(file) processUploadedFile(file);
         }
 
         function exportData() {
@@ -886,8 +988,8 @@
 
         function showNotification(msg, isError = false) {
             const div = document.createElement('div');
-            div.className = `fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 border transition-all duration-300 transform translate-y-2 opacity-0 ${isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white text-slate-800 border-slate-200'}`;
-            div.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation text-hsbcRed' : 'fa-circle-check text-emerald-600'}"></i> ${msg}`;
+            div.className = `fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 border transition-all duration-300 transform translate-y-2 opacity-0 ${isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-900 text-white border-slate-800'}`;
+            div.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation text-hsbcRed' : 'fa-circle-check text-emerald-400'}"></i> ${msg}`;
             document.body.appendChild(div);
             
             setTimeout(() => { div.classList.remove('translate-y-2', 'opacity-0'); }, 50);
