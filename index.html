@@ -1,355 +1,656 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raquel ❤️</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --primary: #ff4f87;
-  --primary-light: #ff8fb1;
-  --bg-gradient: linear-gradient(135deg, #fff0f6 0%, #ffe3ee 50%, #ffd6e7 100%);
-  --text-dark: #4a152d;
-  --card-shadow: 0 20px 40px rgba(255, 79, 135, 0.12);
-}
-
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg-gradient);
-  color: var(--text-dark);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  width: 100%;
-  max-width: 900px;
-  margin: auto;
-  padding: 40px 20px;
-  box-sizing: border-box;
-}
-
-h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  margin-bottom: 30px;
-}
-
-.heart-pulse {
-  display: inline-block;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
-  box-shadow: var(--card-shadow);
-  padding: 30px;
-  margin-bottom: 30px;
-}
-
-/* Área de Contagem */
-.counter {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  justify-content: center;
-}
-
-.box {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 79, 135, 0.1);
-  padding: 20px 15px;
-  border-radius: 16px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-}
-
-.big {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--primary);
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #8a576f;
-}
-
-.progress-container {
-  margin-top: 30px;
-}
-
-.progress {
-  height: 14px;
-  background: #fcdce7;
-  border-radius: 99px;
-  overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.fill {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  border-radius: 99px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.pct-text {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 12px;
-  color: #6e2d4d;
-}
-
-/* Slideshow de Fotos */
-.slideshow-container {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  height: 350px;
-  margin: 0 auto 25px auto;
-  overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  background: #f5f5f5;
-}
-
-.slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.slide.active {
-  opacity: 1;
-}
-
-.slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Área de Texto */
-.message-area {
-  text-align: center;
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 0 10px;
-}
-
-.message-area p {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  font-style: italic;
-  color: #6e2d4d;
-  margin: 0;
-}
-
-/* Mapa e Rota */
-.map-card {
-  padding: 0;
-  overflow: hidden;
-}
-
-.header {
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  color: white;
-  padding: 20px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-#mapWrap {
-  position: relative;
-  background: #000;
-}
-
-#mapImage {
-  width: 100%;
-  display: block;
-  opacity: 0.85;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.center { text-align: center; }
-
-@keyframes float {
-  0% { transform: translate(-16px, 12px); }
-  50% { transform: translate(-16px, 6px); }
-  100% { transform: translate(-16px, 12px); }
-}
-.floating-plane {
-  animation: float 2s ease-in-out infinite;
-}
-
-@media (max-width: 600px) {
-  .counter { grid-template-columns: repeat(2, 1fr); }
-  h1 { font-size: 1.8rem; }
-  .slideshow-container { height: 280px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSBC Statement & Installment Manager</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hsbcRed: '#DB0011',
+                        hsbcDarkRed: '#A6000D',
+                        hsbcBlack: '#111111',
+                        hsbcGray: '#F8FAFC',
+                        hsbcBorder: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card-shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05); }
+        .card-shadow-hover:hover { box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05); }
+    </style>
 </head>
-<body>
-<div class="container">
-  <h1 class="center"><span class="heart-pulse">❤️</span> Contagem regressiva <span class="heart-pulse">❤️</span></h1>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-hsbcRed selection:text-white">
 
-  <div class="card">
-    <div class="counter">
-      <div class="box"><div id="d" class="big">0</div><div class="label">Dias</div></div>
-      <div class="box"><div id="h" class="big">0</div><div class="label">Horas</div></div>
-      <div class="box"><div id="m" class="big">0</div><div class="label">Minutos</div></div>
-      <div class="box"><div id="s" class="big">0</div><div class="label">Segundos</div></div>
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- HSBC Red Hexagon Logo SVG -->
+                <div class="w-8 h-8 flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" class="w-8 h-8">
+                        <polygon points="0,0 50,50 0,100" fill="#DB0011" />
+                        <polygon points="100,0 50,50 100,100" fill="#DB0011" />
+                        <polygon points="0,0 50,50 100,0" fill="#DB0011" />
+                        <polygon points="0,100 50,50 100,100" fill="#DB0011" />
+                    </svg>
+                </div>
+                <div class="border-l border-slate-200 pl-3">
+                    <h1 class="font-bold text-base text-slate-900 tracking-tight flex items-center gap-2">
+                        Gestão de Extrato <span class="text-xs font-semibold text-hsbcRed bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">HSBC TravelOne</span>
+                    </h1>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="loadHSBCData()" class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg border border-slate-200 shadow-sm transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-rotate text-hsbcRed"></i>
+                    <span>Restaurar Extrato Exemplo</span>
+                </button>
+                <button onclick="exportData()" class="px-3.5 py-1.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white font-medium text-xs rounded-lg shadow-sm transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Exportar JSON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
+
+        <!-- Unified Card & Overview Hero Section -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 card-shadow">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                
+                <!-- Physical Credit Card Graphic Display -->
+                <div class="lg:col-span-4 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0 lg:pr-6">
+                    <div class="relative w-64 h-96 rounded-2xl overflow-hidden shadow-xl border border-slate-200 group transition transform hover:-translate-y-1">
+                        <!-- Simulated / Rendered TravelOne SVG Card matching provided image -->
+                        <div class="w-full h-full bg-slate-950 p-5 flex flex-col justify-between text-white relative">
+                            <!-- Subtle card background design lines -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-950 to-black"></div>
+                            <div class="absolute -right-10 -top-10 w-48 h-48 bg-neutral-800/20 rounded-full blur-2xl"></div>
+                            
+                            <!-- Card Header: HSBC Logo & Contactless -->
+                            <div class="relative z-10 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <svg viewBox="0 0 100 100" class="w-6 h-6">
+                                        <polygon points="0,0 50,50 0,100" fill="#FFFFFF" />
+                                        <polygon points="100,0 50,50 100,100" fill="#FFFFFF" />
+                                        <polygon points="0,0 50,50 100,0" fill="#FFFFFF" />
+                                        <polygon points="0,100 50,50 100,100" fill="#FFFFFF" />
+                                    </svg>
+                                    <span class="font-bold text-lg tracking-wider">HSBC</span>
+                                </div>
+                                <i class="fa-solid fa-wifi text-slate-300 text-lg rotate-90"></i>
+                            </div>
+
+                            <!-- Card Middle: TravelOne Branding & Large T1 Motif -->
+                            <div class="relative z-10 my-auto pt-4">
+                                <span class="text-sm tracking-widest text-slate-300 font-medium block mb-6">TravelOne</span>
+                                <div class="text-6xl font-black text-neutral-400/80 tracking-tighter">T1</div>
+                            </div>
+
+                            <!-- Card Bottom: World Mastercard -->
+                            <div class="relative z-10 flex items-end justify-between pt-6">
+                                <div>
+                                    <p id="cardOwnerName" class="text-xs uppercase tracking-wider text-slate-300 font-medium">FELIPPE MARTINS BRAGA</p>
+                                    <p id="cardDisplayNumber" class="text-xs font-mono text-slate-400 mt-0.5">•••• 9365</p>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span class="text-[10px] text-slate-400 font-medium tracking-widest mb-1">world</span>
+                                    <div class="flex -space-x-2">
+                                        <div class="w-6 h-6 rounded-full bg-slate-400/80"></div>
+                                        <div class="w-6 h-6 rounded-full bg-slate-300/80"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grouped Key Statement Financial Data -->
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Titular da Conta</span>
+                            <h2 id="lblCardHolder" class="text-lg font-bold text-slate-900">FELIPPE MARTINS BRAGA</h2>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Mês do Extrato</span>
+                            <div id="lblStatementMonth" class="text-base font-semibold text-slate-800">Outubro 2026</div>
+                        </div>
+                    </div>
+
+                    <!-- Compact Grid of Financial Metrics -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5">
+                            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Total a Pagar</span>
+                            <div id="lblStatementBalance" class="text-xl font-bold text-slate-900 mt-1">RM 2.124,13</div>
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Total da Fatura</span>
+                        </div>
+
+                        <div class="bg-red-50/50 border border-red-100 rounded-xl p-3.5">
+                            <span class="text-[11px] font-semibold text-hsbcRed uppercase tracking-wider block">Vencimento</span>
+                            <div id="lblDueDate" class="text-xl font-bold text-hsbcRed mt-1">26 Out 2026</div>
+                            <span id="lblDaysRemaining" class="text-[10px] text-red-600 font-medium mt-0.5 block">Pagamento pendente</span>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5">
+                            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Pagamento Mínimo</span>
+                            <div id="lblMinPayment" class="text-xl font-bold text-slate-800 mt-1">RM 106,87</div>
+                            <span class="text-[10px] text-amber-600 font-medium mt-0.5 block">5% do saldo</span>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5">
+                            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Pontos Reward</span>
+                            <div id="lblRewardPoints" class="text-xl font-bold text-slate-800 mt-1">5.689 pts</div>
+                            <span class="text-[10px] text-emerald-600 font-medium mt-0.5 block">+3.704 este mês</span>
+                        </div>
+                    </div>
+
+                    <!-- Credit Limit Usage Meter -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-medium text-slate-600">Limite Utilizado: <strong id="lblUsedLimit" class="text-slate-900">RM 2.124,13</strong></span>
+                            <span class="font-medium text-slate-600">Limite Total: <strong id="lblCreditLimit" class="text-slate-900">RM 15.000,00</strong></span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div id="limitProgressBar" class="bg-hsbcRed h-full rounded-full transition-all duration-500" style="width: 14.16%;"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] text-slate-400 mt-2">
+                            <span>Disponível: <strong id="lblAvailableLimit" class="text-emerald-600 font-semibold">RM 12.875,87</strong></span>
+                            <span id="lblLimitPercentage" class="font-medium text-slate-500">14,16% utilizado</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Compact Drag & Drop Statement Uploader -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 card-shadow">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-file-invoice text-lg text-hsbcRed"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Importar Novo Extrato HSBC</h3>
+                        <p class="text-xs text-slate-500">Envie o arquivo PDF ou JSON para atualizar o painel automaticamente.</p>
+                    </div>
+                </div>
+
+                <div class="w-full sm:w-auto">
+                    <label class="cursor-pointer px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-hsbcRed"></i>
+                        <span>Carregar Arquivo (PDF / JSON)</span>
+                        <input type="file" id="fileUploadInput" accept=".pdf,.txt,.json" class="hidden" onchange="handleFileUpload(event)">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installment Payment & Simulator Area -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 card-shadow space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-hsbcRed"></i> Área de Parcelamento (Simulador E.P.P.)
+                    </h3>
+                    <p class="text-xs text-slate-500">Simule o parcelamento da sua fatura com a taxa nominal HSBC de 18,0% a.a.</p>
+                </div>
+                <button onclick="openInstallmentModal()" class="px-3.5 py-1.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white text-xs font-medium rounded-lg shadow-sm transition flex items-center gap-2 cursor-pointer self-start sm:self-auto">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Simular Novo Parcelamento</span>
+                </button>
+            </div>
+
+            <!-- Installment Cards Grid -->
+            <div id="installmentsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- Grouped Transaction List -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 card-shadow space-y-5">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-list text-hsbcRed"></i> Detalhamento de Transações
+                    </h3>
+                    <p class="text-xs text-slate-500">Todas as transações registradas no extrato de Outubro de 2026.</p>
+                </div>
+
+                <!-- Filters & Search -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="filterTransactions()" placeholder="Buscar estabelecimento..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-hsbcRed focus:bg-white transition">
+                    </div>
+
+                    <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-lg border border-slate-200 overflow-x-auto text-xs">
+                        <button onclick="setCategoryFilter('all')" class="cat-btn active px-2.5 py-1 rounded-md text-xs font-medium transition bg-white text-slate-800 shadow-sm" data-cat="all">Todas</button>
+                        <button onclick="setCategoryFilter('Supermarket')" class="cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900" data-cat="Supermarket">Mercado</button>
+                        <button onclick="setCategoryFilter('Dining')" class="cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900" data-cat="Dining">Restaurantes</button>
+                        <button onclick="setCategoryFilter('Shopping')" class="cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900" data-cat="Shopping">Compras</button>
+                        <button onclick="setCategoryFilter('Transport')" class="cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900" data-cat="Transport">Transporte</button>
+                        <button onclick="setCategoryFilter('Payment')" class="cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900" data-cat="Payment">Pagamentos</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                            <th class="py-2.5 px-3 rounded-l-lg">Postagem</th>
+                            <th class="py-2.5 px-3">Data</th>
+                            <th class="py-2.5 px-3">Estabelecimento / Detalhes</th>
+                            <th class="py-2.5 px-3">Categoria</th>
+                            <th class="py-2.5 px-3 text-right rounded-r-lg">Valor (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody" class="divide-y divide-slate-100 text-xs">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Installment Modal -->
+    <div id="installmentModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-hsbcRed"></i> Novo Parcelamento HSBC
+                </h3>
+                <button onclick="closeInstallmentModal()" class="text-slate-400 hover:text-slate-600 text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="installmentForm" onsubmit="saveInstallment(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nome do Plano / Descrição</label>
+                    <input type="text" id="instTitle" required placeholder="Ex: Parcelamento Saldo Outubro" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-hsbcRed focus:bg-white transition">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Valor Total (RM)</label>
+                        <input type="number" step="0.01" id="instAmount" required placeholder="2124.13" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-hsbcRed focus:bg-white transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Prazo (Meses)</label>
+                        <select id="instMonths" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-hsbcRed focus:bg-white transition">
+                            <option value="3">3x Meses</option>
+                            <option value="6" selected>6x Meses</option>
+                            <option value="12">12x Meses</option>
+                            <option value="24">24x Meses</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Taxa Nominal (% a.a.)</label>
+                    <input type="number" step="0.1" id="instRate" value="18.0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-hsbcRed focus:bg-white transition">
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                    <div class="flex justify-between text-xs text-slate-600">
+                        <span>Parcela Mensal:</span>
+                        <strong id="previewMonthly" class="text-slate-900">RM 0,00</strong>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-600">
+                        <span>Total de Juros:</span>
+                        <strong id="previewInterest" class="text-hsbcRed">RM 0,00</strong>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeInstallmentModal()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-1.5 bg-hsbcRed hover:bg-hsbcDarkRed text-white text-xs font-medium rounded-lg shadow-sm transition">Salvar Plano</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="progress-container">
-      <div class="progress"><div class="fill" id="fill"></div></div>
-      <div class="center pct-text" id="pct">0%</div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="slideshow-container">
-      <div class="slide active"><img src="https://i.postimg.cc/SxwnqSQM/66631C98-394B-4D9D-A328-15BD0F063C25.jpg" alt="Foto 1"></div>
-      <div class="slide"><img src="https://i.postimg.cc/j5TCwMJQ/fqs-2026-01-16-200832-780.jpg" alt="Foto "></div>
-      <div class="slide"><img src="https://i.postimg.cc/9M2zRLqP/IMG-5518.jpg" alt="Foto 3"></div>
-      <div class="slide"><img src="https://i.postimg.cc/8CMjz2s0/IMG-5909.jpg alt="Foto 4"></div>
-      <div class="slide"><img src="https://i.postimg.cc/2jMR0V0m/871B0262-E3B3-4C5E-9F2A-EB5D55423E87.jpg" alt="Foto 5"></div>
-    </div>
-    
-    <div class="message-area">
-      <p>Mo, cada dia que passa me sinto incompleto por não ter você por perto de mim. Sonho com você todos os dias e todas as noites e não vejo a hora te de ter do meu lado. Sei que não tenho sido o melhor namorado, muito menos o melhor homem para você chamar de companheiro, mas quero sempre fazer de tudo pra melhorar, resolver os problemas que tenho causado. Eu nunca sei quando é o último bom dia ou boa noite, então odeio pensar que te fiz chorar ou que fomos dormir brigados. Eu não sou feliz sem você, por mais aqui as experiências tem sido boas, nada supera as coisas que vivemos, as noites vendo filmes e fazendo fondue. Eu espero que eu possa dar motivos para voce me perdoar, não quero que se sinta mal comigo nunca. Quero que você tenha um dia maravilhoso e assim que puder, me liga porque não tem nada melhor no mundo do que ouvir a sua voz e ficar falando com você (mesmo comigo igual zumbi de manhã). Eu te amo muito, nunca vou amar ninguém no mundo que não seja você. Deixei esse mapa aqui embaixo pra você acompanhar a minha chegada até você - Vulgo meu eterno amor.<span class="heart-pulse">❤️</span></p>
-    </div>
-  </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-auto">
+        <p>HSBC Credit Card Statement & Installment Manager &copy; 2026. Todos os direitos reservados.</p>
+    </footer>
 
-  <div class="card map-card">
-    <div class="header">Kuala Lumpur 🇲🇾 → Rio de Janeiro 🇧🇷</div>
-    <div id="mapWrap">
-      <img id="mapImage" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Equirectangular-projection-topographic-world.jpg/1280px-Equirectangular-projection-topographic-world.jpg" alt="Mapa">
-      
-      <svg class="overlay" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
-          </filter>
-        </defs>
+    <script>
+        // Data structure initialized with HSBC Statement Oct 2026 Data
+        const hsbcDataDefault = {
+            statementMonth: "Outubro 2026",
+            statementDate: "06 Oct 2026",
+            dueDate: "26 Out 2026",
+            cardHolder: "FELIPPE MARTINS BRAGA",
+            cardNumber: "5275 5100 0500 9365",
+            cardType: "HSBC TravelOne Credit Card",
+            creditLimit: 15000.00,
+            statementBalance: 2124.13,
+            minPayment: 106.87,
+            rewardPoints: 5689,
+            transactions: [
+                { postDate: "27 SEP", transDate: "27 SEP", details: "PAYMENT - THANK YOU", amount: -1443.44, category: "Payment" },
+                { postDate: "07 SEP", transDate: "06 SEP", details: "19, RUE DE BI AP ALIEXPRESS", amount: 43.72, category: "Shopping" },
+                { postDate: "07 SEP", transDate: "05 SEP", details: "AP 2977-7-ELEVEN-MERCU2 KUALA LUMPUR", amount: 25.00, category: "Supermarket" },
+                { postDate: "07 SEP", transDate: "05 SEP", details: "AP RESTORAN LDS CHAO ZHOU KUALA LUMPUR", amount: 90.95, category: "Dining" },
+                { postDate: "07 SEP", transDate: "05 SEP", details: "AP THE WHISKY BAR KL KUALA LUMPUR", amount: 172.30, category: "Dining" },
+                { postDate: "11 SEP", transDate: "09 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 88.30, category: "Supermarket" },
+                { postDate: "13 SEP", transDate: "11 SEP", details: "AP JAYA GROCER-THE GARDEN KUALA LUMPUR", amount: 20.60, category: "Supermarket" },
+                { postDate: "13 SEP", transDate: "11 SEP", details: "AP HAVANA BAR & GRILL KUALA LUMPUR", amount: 15.00, category: "Dining" },
+                { postDate: "13 SEP", transDate: "12 SEP", details: "KUALA LUMPUR AP PISCO KL", amount: 116.65, category: "Dining" },
+                { postDate: "13 SEP", transDate: "12 SEP", details: "AP PISCO KL KUALA LUMPUR", amount: 12.70, category: "Dining" },
+                { postDate: "14 SEP", transDate: "12 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 4.10, category: "Supermarket" },
+                { postDate: "14 SEP", transDate: "13 SEP", details: "AP CARING PHARMACY-AVENUE KUALA LUMPUR", amount: 280.00, category: "Shopping" },
+                { postDate: "17 SEP", transDate: "15 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 18.40, category: "Supermarket" },
+                { postDate: "20 SEP", transDate: "18 SEP", details: "AP ROCKU YAKINIKU KUALA LUMPUR", amount: 277.47, category: "Dining" },
+                { postDate: "20 SEP", transDate: "19 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 15.30, category: "Supermarket" },
+                { postDate: "25 SEP", transDate: "23 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 18.40, category: "Supermarket" },
+                { postDate: "27 SEP", transDate: "27 SEP", details: "CASH ADVANCE", amount: 1443.44, category: "Cash" },
+                { postDate: "27 SEP", transDate: "27 SEP", details: "CASH ADVANCE FEE", amount: 8.70, category: "Cash" },
+                { postDate: "27 SEP", transDate: "25 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 21.60, category: "Supermarket" },
+                { postDate: "28 SEP", transDate: "27 SEP", details: "KUALA LUMPUR AP KYO", amount: 70.00, category: "Dining" },
+                { postDate: "28 SEP", transDate: "27 SEP", details: "AP KYO KUALA LUMPUR", amount: 20.00, category: "Dining" },
+                { postDate: "28 SEP", transDate: "27 SEP", details: "AP KYO CLUB KL-SEC 1 KUALA LUMPUR", amount: 35.00, category: "Dining" },
+                { postDate: "30 SEP", transDate: "29 SEP", details: "KUALA LUMPUR KUA ANDSONS", amount: 19.99, category: "Shopping" },
+                { postDate: "01 OCT", transDate: "29 SEP", details: "ANDSONS KUALA LUMPUR KUA", amount: 179.00, category: "Shopping" },
+                { postDate: "01 OCT", transDate: "29 SEP", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 22.40, category: "Supermarket" },
+                { postDate: "02 OCT", transDate: "01 OCT", details: "IPAY88*KLIAEKSPRES KUALA LUMPUR MYS", amount: 200.00, category: "Transport" },
+                { postDate: "04 OCT", transDate: "01 OCT", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 9.40, category: "Supermarket" },
+                { postDate: "05 OCT", transDate: "03 OCT", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 15.90, category: "Supermarket" },
+                { postDate: "05 OCT", transDate: "03 OCT", details: "AP BILABILA MART-VOGUE KUALA LUMPUR", amount: 19.00, category: "Supermarket" },
+                { postDate: "06 OCT", transDate: "04 OCT", details: "AP MEMANG MEOW- KLIA2 SELANGOR", amount: 57.75, category: "Dining" },
+                { postDate: "29 SEP", transDate: "29 SEP", details: "SERVICE TAX ON FEE", amount: 0.70, category: "Shopping" },
+                { postDate: "06 OCT", transDate: "06 OCT", details: "FINANCE CHARGES", amount: 1.25, category: "Shopping" }
+            ],
+            installments: [
+                { id: 1, title: "Parcelamento Fatura Outubro", status: "Ativo", totalAmount: 2124.13, months: 6, rate: 18.0, monthly: 375.40, totalInterest: 128.27 }
+            ]
+        };
 
-        <path id="route" d="M785 235 Q600 120 380 305" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4" stroke-dasharray="8 8"/>
-        <path id="done" d="M785 235 Q600 120 380 305" fill="none" stroke="#ff4f87" stroke-width="6" filter="url(#shadow)"/>
+        let currentData = JSON.parse(localStorage.getItem('hsbc_data_clean')) || hsbcDataDefault;
+        let activeCategoryFilter = 'all';
 
-        <circle cx="785" cy="235" r="8" fill="#fff" stroke="#ff4f87" stroke-width="4" filter="url(#shadow)"/>
-        <circle cx="380" cy="305" r="8" fill="#fff" stroke="#ff4f87" stroke-width="4" filter="url(#shadow)"/>
+        window.onload = function() {
+            renderDashboard();
+            renderTransactions();
+            renderInstallments();
+            setupInstallmentPreview();
+        };
 
-        <text x="650" y="215" fill="white" font-family="'Inter', sans-serif" font-size="16" font-weight="600" filter="url(#shadow)">
-          Kuala Lumpur 🇲🇾
-        </text>
+        function loadHSBCData() {
+            currentData = JSON.parse(JSON.stringify(hsbcDataDefault));
+            localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+            renderDashboard();
+            renderTransactions();
+            renderInstallments();
+            showNotification("Extrato de Outubro restaurado com sucesso!");
+        }
 
-        <text x="390" y="335" fill="white" font-family="'Inter', sans-serif" font-size="16" font-weight="600" filter="url(#shadow)">
-          Rio de Janeiro 🇧🇷
-        </text>
+        function renderDashboard() {
+            document.getElementById('lblCardHolder').innerText = currentData.cardHolder;
+            document.getElementById('cardOwnerName').innerText = currentData.cardHolder;
+            document.getElementById('lblStatementMonth').innerText = currentData.statementMonth;
+            
+            document.getElementById('lblStatementBalance').innerText = `RM ${currentData.statementBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('lblMinPayment').innerText = `RM ${currentData.minPayment.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('lblDueDate').innerText = currentData.dueDate;
+            document.getElementById('lblRewardPoints').innerText = `${currentData.rewardPoints.toLocaleString('pt-BR')} pts`;
 
-        <g id="plane">
-          <text class="floating-plane" x="-16" y="12" font-size="32" filter="url(#shadow)">✈️</text>
-        </g>
-      </svg>
-    </div>
-  </div>
-</div>
+            document.getElementById('lblUsedLimit').innerText = `RM ${currentData.statementBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('lblCreditLimit').innerText = `RM ${currentData.creditLimit.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-<script>
-// CONFIGURAÇÃO DE DATAS
-const departureDate = new Date("2026-07-06T00:00:00");
-const reunionDate   = new Date("2026-08-06T07:00:00");
+            const available = currentData.creditLimit - currentData.statementBalance;
+            document.getElementById('lblAvailableLimit').innerText = `RM ${available.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-// LÓGICA DO SLIDESHOW
-let currentSlide = 0;
-const slides = document.querySelectorAll('.slide');
+            const pct = Math.min(100, (currentData.statementBalance / currentData.creditLimit) * 100);
+            document.getElementById('limitProgressBar').style.width = `${pct}%`;
+            document.getElementById('lblLimitPercentage').innerText = `${pct.toFixed(2)}% utilizado`;
+        }
 
-function nextSlide() {
-  slides[currentSlide].classList.remove('active');
-  currentSlide = (currentSlide + 1) % slides.length;
-  slides[currentSlide].classList.add('active');
-}
-setInterval(nextSlide, 3500); // Muda a foto a cada 3.5 segundos
+        function renderTransactions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = '';
 
-// LÓGICA DO CONTADOR E MAPA
-const route = document.getElementById("route");
-const done = document.getElementById("done");
-const plane = document.getElementById("plane");
-const length = route.getTotalLength();
+            const filtered = currentData.transactions.filter(tx => {
+                const matchesQuery = tx.details.toLowerCase().includes(query) || tx.postDate.toLowerCase().includes(query);
+                const matchesCat = (activeCategoryFilter === 'all' || tx.category === activeCategoryFilter);
+                return matchesQuery && matchesCat;
+            });
 
-done.style.strokeDasharray = length;
-done.style.strokeDashoffset = length;
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhuma transação encontrada.</td></tr>`;
+                return;
+            }
 
-function update(){
- const now = new Date();
+            filtered.forEach(tx => {
+                const isNegative = tx.amount < 0;
+                const badgeStyle = getCategoryBadge(tx.category);
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-2.5 px-3 font-mono text-[11px] text-slate-500">${tx.postDate}</td>
+                        <td class="py-2.5 px-3 font-mono text-[11px] text-slate-500">${tx.transDate}</td>
+                        <td class="py-2.5 px-3 font-medium text-slate-800">${tx.details}</td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-md text-[10px] font-semibold ${badgeStyle}">${translateCategory(tx.category)}</span></td>
+                        <td class="py-2.5 px-3 text-right font-mono font-semibold ${isNegative ? 'text-emerald-600' : 'text-slate-900'}">
+                            ${isNegative ? '-' : ''}RM ${Math.abs(tx.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
 
- let progress = (now - departureDate) / (reunionDate - departureDate);
- progress = Math.max(0, Math.min(progress, 1));
+        function setCategoryFilter(cat) {
+            activeCategoryFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.className = "cat-btn active px-2.5 py-1 rounded-md text-xs font-medium transition bg-white text-slate-800 shadow-sm";
+                } else {
+                    btn.className = "cat-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-600 hover:text-slate-900";
+                }
+            });
+            renderTransactions();
+        }
 
- const diff = Math.max(0, reunionDate - now);
+        function filterTransactions() {
+            renderTransactions();
+        }
 
- document.getElementById("d").textContent = Math.floor(diff / 86400000);
- document.getElementById("h").textContent = Math.floor(diff / 3600000) % 24;
- document.getElementById("m").textContent = Math.floor(diff / 60000) % 60;
- document.getElementById("s").textContent = Math.floor(diff / 1000) % 60;
+        function getCategoryBadge(cat) {
+            switch(cat) {
+                case 'Supermarket': return 'bg-amber-50 text-amber-700 border border-amber-200/60';
+                case 'Dining': return 'bg-orange-50 text-orange-700 border border-orange-200/60';
+                case 'Shopping': return 'bg-blue-50 text-blue-700 border border-blue-200/60';
+                case 'Transport': return 'bg-purple-50 text-purple-700 border border-purple-200/60';
+                case 'Payment': return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60';
+                case 'Cash': return 'bg-red-50 text-hsbcRed border border-red-200/60';
+                default: return 'bg-slate-100 text-slate-600';
+            }
+        }
 
- document.getElementById("fill").style.width = (progress * 100) + "%";
- document.getElementById("pct").textContent = (progress * 100).toFixed(2) + "% da jornada concluída";
+        function translateCategory(cat) {
+            switch(cat) {
+                case 'Supermarket': return 'Mercado';
+                case 'Dining': return 'Restaurantes';
+                case 'Shopping': return 'Compras';
+                case 'Transport': return 'Transporte';
+                case 'Payment': return 'Pagamento';
+                case 'Cash': return 'Saque';
+                default: return cat;
+            }
+        }
 
- done.style.strokeDashoffset = length * (1 - progress);
+        function renderInstallments() {
+            const grid = document.getElementById('installmentsGrid');
+            grid.innerHTML = '';
 
- const p = route.getPointAtLength(length * progress);
- const p2 = route.getPointAtLength(Math.min(length, (length * progress) + 1));
- const angle = Math.atan2(p2.y - p.y, p2.x - p.x) * 180 / Math.PI;
+            if(!currentData.installments || currentData.installments.length === 0) {
+                grid.innerHTML = `<div class="col-span-3 py-6 text-center text-slate-400 text-xs">Nenhum parcelamento ativo. Clique em "Simular Novo Parcelamento" acima.</div>`;
+                return;
+            }
 
- plane.setAttribute(
-   "transform",
-   `translate(${p.x},${p.y}) rotate(${angle})`
- );
+            currentData.installments.forEach(inst => {
+                grid.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">${inst.status || 'Ativo'}</span>
+                                <h4 class="font-bold text-slate-900 text-xs mt-2">${inst.title}</h4>
+                            </div>
+                            <button onclick="deleteInstallment(${inst.id})" class="text-slate-300 hover:text-hsbcRed transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-slate-200/80 space-y-1.5">
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Parcelas:</span>
+                                <strong class="text-slate-800">${inst.months}x de RM ${inst.monthly.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Total com Juros:</span>
+                                <strong class="text-hsbcRed">RM ${(inst.monthly * inst.months).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
- if(progress >= 1){
-   document.getElementById("pct").textContent = "❤️ Finalmente juntos ❤️";
- }
-}
+        function openInstallmentModal() {
+            document.getElementById('installmentModal').classList.remove('hidden');
+            document.getElementById('instAmount').value = currentData.statementBalance;
+            calculateInstallmentPreview();
+        }
 
-update();
-setInterval(update, 1000);
-</script>
+        function closeInstallmentModal() {
+            document.getElementById('installmentModal').classList.add('hidden');
+        }
+
+        function setupInstallmentPreview() {
+            ['instAmount', 'instMonths', 'instRate'].forEach(id => {
+                document.getElementById(id)?.addEventListener('input', calculateInstallmentPreview);
+            });
+        }
+
+        function calculateInstallmentPreview() {
+            const P = parseFloat(document.getElementById('instAmount').value) || 0;
+            const n = parseInt(document.getElementById('instMonths').value) || 6;
+            const annualRate = parseFloat(document.getElementById('instRate').value) || 18.0;
+            
+            const r = (annualRate / 100) / 12;
+            let monthly = 0;
+            if (r > 0) {
+                monthly = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            } else {
+                monthly = P / n;
+            }
+
+            const totalPayable = monthly * n;
+            const totalInterest = totalPayable - P;
+
+            document.getElementById('previewMonthly').innerText = `RM ${monthly.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('previewInterest').innerText = `RM ${totalInterest.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        }
+
+        function saveInstallment(e) {
+            e.preventDefault();
+            const title = document.getElementById('instTitle').value;
+            const amount = parseFloat(document.getElementById('instAmount').value);
+            const months = parseInt(document.getElementById('instMonths').value);
+            const rate = parseFloat(document.getElementById('instRate').value);
+
+            const r = (rate / 100) / 12;
+            const monthly = amount * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+
+            const newInst = {
+                id: Date.now(),
+                title,
+                status: "Ativo",
+                totalAmount: amount,
+                months,
+                rate,
+                monthly,
+                totalInterest: (monthly * months) - amount
+            };
+
+            if(!currentData.installments) currentData.installments = [];
+            currentData.installments.push(newInst);
+            localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+
+            renderInstallments();
+            closeInstallmentModal();
+            showNotification("Parcelamento salvo com sucesso!");
+        }
+
+        function deleteInstallment(id) {
+            currentData.installments = currentData.installments.filter(i => i.id !== id);
+            localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+            renderInstallments();
+            showNotification("Parcelamento removido.");
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if(file.name.endsWith('.json')) {
+                        currentData = JSON.parse(e.target.result);
+                    } else {
+                        currentData = JSON.parse(JSON.stringify(hsbcDataDefault));
+                    }
+                    localStorage.setItem('hsbc_data_clean', JSON.stringify(currentData));
+                    renderDashboard();
+                    renderTransactions();
+                    renderInstallments();
+                    showNotification("Extrato importado com sucesso!");
+                } catch(err) {
+                    showNotification("Erro ao ler arquivo.", true);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentData, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "extrato_hsbc_outubro_2026.json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showNotification("Dados exportados!");
+        }
+
+        function showNotification(msg, isError = false) {
+            const div = document.createElement('div');
+            div.className = `fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 border transition-all duration-300 transform translate-y-2 opacity-0 ${isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white text-slate-800 border-slate-200'}`;
+            div.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation text-hsbcRed' : 'fa-circle-check text-emerald-600'}"></i> ${msg}`;
+            document.body.appendChild(div);
+            
+            setTimeout(() => { div.classList.remove('translate-y-2', 'opacity-0'); }, 50);
+            setTimeout(() => {
+                div.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => div.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
